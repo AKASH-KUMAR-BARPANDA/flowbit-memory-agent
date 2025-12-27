@@ -23,7 +23,7 @@ export class InvoiceProcessor {
         let correctionMemoryApplied = false;
 
 
-        // 🚨 DUPLICATE CHECK (FIRST)
+        //  DUPLICATE CHECK (FIRST)
         if (this.duplicateDetector.isDuplicate(invoice)) {
             return {
                 normalizedInvoice: {},
@@ -45,7 +45,7 @@ export class InvoiceProcessor {
 // record invoice if not duplicate
         this.duplicateDetector.record(invoice);
 
-        // 🔍 RECALL
+        //  RECALL
         const vendorMemory = this.vendorMemoryStore.findByVendor(invoice.vendor);
         auditTrail.push({
             step: "recall",
@@ -55,7 +55,7 @@ export class InvoiceProcessor {
                 : `No vendor memory found for ${invoice.vendor}`
         });
 
-        // 🧠 APPLY
+        //  APPLY
         if (vendorMemory?.patterns.fieldAliases) {
             for (const [alias, targetField] of Object.entries(
                 vendorMemory.patterns.fieldAliases
@@ -76,7 +76,7 @@ export class InvoiceProcessor {
             });
         }
 
-        // 🔎 CORRECTION MEMORY CHECK (VAT)
+        //  CORRECTION MEMORY CHECK (VAT)
         if (invoice.rawText.toLowerCase().includes("vat")) {
             const correction = this.correctionMemoryStore.findApplicable(
                 "VAT_INCLUDED",
@@ -104,7 +104,7 @@ export class InvoiceProcessor {
             }
         }
 
-        // ⚖️ DECIDE
+        //  DECIDE
         if (confidenceScore >= 0.6) {
             requiresHumanReview = false;
 
